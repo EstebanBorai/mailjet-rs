@@ -1,0 +1,21 @@
+[package]
+name = "mailjet-rs"
+version = "0.0.0"
+authors = ["Esteban Borai <estebanborai@gmail.com>"]
+edition = "2018"
+license = "MIT"
+description = "Mailjet API Client for Rust"
+readme = "../README.md"
+repository = "https://github.com/EstebanBorai/mailjet-rs"
+categories = []
+
+[lib]
+name = "mailjet_rs"
+path = "src/lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+http-auth-basic = "0.1.0"
+hyper = "0.13"
+hyper-tls = "0.4.3"
