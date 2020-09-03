@@ -1,9 +1,14 @@
+use crate::api::common::Payload;
+use crate::client::error::Error as MailjetError;
+use crate::client::response::Response as MailjetResponse;
+use crate::client::status_code::StatusCode as MailjetStatusCode;
+use crate::client::version::SendAPIVersion;
 use http_auth_basic::Credentials;
-use hyper::{Request, Response, Body};
 use hyper::client::HttpConnector;
-use hyper_tls::HttpsConnector;
 use hyper::Client as HyperClient;
 use hyper::Error as HyperError;
+use hyper::{Body, Request, Response};
+use hyper_tls::HttpsConnector;
 
 /// A Mailjet HTTP Client
 pub struct Client {
@@ -16,7 +21,7 @@ pub struct Client {
 impl Client {
     /// Creates an authenticated Mailjet client by using the provided
     /// `public_key` and `private_key`
-    pub fn new(public_key: &str, private_key: &str) -> Self {
+    pub fn new(send_api_version: SendAPIVersion, public_key: &str, private_key: &str) -> Self {
         // Creates a basic authentication `Credentials` struct used to authenticate to the
         // Email API.
         //
@@ -33,49 +38,32 @@ impl Client {
         let encoded_credentials = keys.as_http_header();
         let https = HttpsConnector::new();
         let http_client = HyperClient::builder().build::<_, hyper::Body>(https);
-        let api_base = String::from("https://api.mailjet.com/v3.1");
 
         Self {
-            api_base,
+            api_base: send_api_version.get_api_url(),
             encoded_credentials,
             http_client,
             keys,
         }
     }
 
-    pub async fn send(&self) {
-        let body = r#"{
-            "Messages":[
-                    {
-                            "From": {
-                                    "Email": "sender!",
-                                    "Name": "Me"
-                            },
-                            "To": [
-                                    {
-                                            "Email": "estebanborai@gmail.com",
-                                            "Name": "You"
-                                    }
-                            ],
-                            "Subject": "My first Mailjet Email!",
-                            "TextPart": "Greetings from Mailjet!",
-                            "HTMLPart": "<h3>Dear passenger 1, welcome to <a href=\"https://www.mailjet.com/\">Mailjet</a>!</h3><br />May the delivery force be with you!"
-                    }
-            ]
-        }"#;
+    pub async fn send(&self, messages: impl Payload) -> Result<MailjetResponse, MailjetError> {
+        let as_json = messages.to_json();
+        let response = self.post(Body::from(as_json), "/send").await.unwrap();
+        let (parts, body) = response.into_parts();
 
-        let response = self.post(Body::from(body), "/send").await;
+        if parts.status.is_client_error() || parts.status.is_server_error() {
+            let mailjet_error =
+                MailjetError::from_api_response(MailjetStatusCode::from(parts.status), body).await;
 
-        if let Ok(res) = response {
-            // handle response
-        } else {
-            eprintln!("Something came wrong {}", response.unwrap().status());
+            return Err(mailjet_error);
         }
+
+        Ok(MailjetResponse::from_api_response(body).await)
     }
 
     async fn post(&self, body: Body, uri: &str) -> Result<Response<Body>, HyperError> {
         let uri = format!("{}{}", self.api_base, uri);
-        println!("{}", uri);
 
         let req = Request::builder()
             .method("POST")

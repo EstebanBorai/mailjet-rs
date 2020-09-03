@@ -1,3 +1,5 @@
+use hyper::http::StatusCode as HyperStatusCode;
+
 /// HTTP Status Codes defined by the Mailjet API.
 ///
 /// Statuses documented in the official documentation are enumerated in the `StatusCode` `enum`.
@@ -7,6 +9,7 @@
 ///
 /// https://dev.mailjet.com/email/reference/overview/errors/
 ///
+#[derive(Debug)]
 pub enum StatusCode {
     /// All went well. Congrats!
     Ok,
@@ -36,4 +39,25 @@ pub enum StatusCode {
     /// which is crucial for us to track the problem and identify the root cause. Please contact our support team, providing the
     /// error identifier and we will do our best to help.
     InternalServerError,
+    /// An unkown status code is received from the Mailjet API
+    Unknown(u16),
+}
+
+impl From<HyperStatusCode> for StatusCode {
+    fn from(hyper_status_code: HyperStatusCode) -> Self {
+        match hyper_status_code {
+            HyperStatusCode::OK => StatusCode::Ok,
+            HyperStatusCode::CREATED => StatusCode::Created,
+            HyperStatusCode::NO_CONTENT => StatusCode::NoContent,
+            HyperStatusCode::NOT_MODIFIED => StatusCode::NotModified,
+            HyperStatusCode::BAD_REQUEST => StatusCode::BadRequest,
+            HyperStatusCode::UNAUTHORIZED => StatusCode::Unauthorized,
+            HyperStatusCode::FORBIDDEN => StatusCode::Forbidden,
+            HyperStatusCode::NOT_FOUND => StatusCode::NotFound,
+            HyperStatusCode::METHOD_NOT_ALLOWED => StatusCode::MethodNotAllowed,
+            HyperStatusCode::TOO_MANY_REQUESTS => StatusCode::TooManyRequests,
+            HyperStatusCode::INTERNAL_SERVER_ERROR => StatusCode::InternalServerError,
+            _ => StatusCode::Unknown(hyper_status_code.as_u16()),
+        }
+    }
 }
