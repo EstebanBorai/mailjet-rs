@@ -1,9 +1,13 @@
 use http_auth_basic::Credentials;
+use crate::message::Message;
 use hyper::{Request, Response, Body};
+use hyper::body::to_bytes as body_to_bytes;
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
 use hyper::Client as HyperClient;
 use hyper::Error as HyperError;
+use core::str::FromStr;
+use std::io::Read;
 
 /// A Mailjet HTTP Client
 pub struct Client {
@@ -43,34 +47,13 @@ impl Client {
         }
     }
 
-    pub async fn send(&self) {
-        let body = r#"{
-            "Messages":[
-                    {
-                            "From": {
-                                    "Email": "sender!",
-                                    "Name": "Me"
-                            },
-                            "To": [
-                                    {
-                                            "Email": "estebanborai@gmail.com",
-                                            "Name": "You"
-                                    }
-                            ],
-                            "Subject": "My first Mailjet Email!",
-                            "TextPart": "Greetings from Mailjet!",
-                            "HTMLPart": "<h3>Dear passenger 1, welcome to <a href=\"https://www.mailjet.com/\">Mailjet</a>!</h3><br />May the delivery force be with you!"
-                    }
-            ]
-        }"#;
+    pub async fn send(&self, message: Message) {
+        let as_json = message.to_json();
+        let response = self.post(Body::from(as_json), "/send").await.unwrap();
+        let bytes = body_to_bytes(response.into_body()).await.unwrap();
+        let body = String::from_utf8(bytes.to_vec()).expect("response was not valid utf-8");
 
-        let response = self.post(Body::from(body), "/send").await;
-
-        if let Ok(res) = response {
-            // handle response
-        } else {
-            eprintln!("Something came wrong {}", response.unwrap().status());
-        }
+        println!("{}", body);
     }
 
     async fn post(&self, body: Body, uri: &str) -> Result<Response<Body>, HyperError> {
