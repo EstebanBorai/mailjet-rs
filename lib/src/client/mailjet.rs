@@ -1,5 +1,5 @@
 use http_auth_basic::Credentials;
-use crate::message::Message;
+use crate::message::Messages;
 use hyper::{Request, Response, Body};
 use hyper::body::to_bytes as body_to_bytes;
 use hyper::client::HttpConnector;
@@ -45,13 +45,15 @@ impl Client {
         }
     }
 
-    pub async fn send(&self, message: Message) {
-        let as_json = message.to_json();
+    pub async fn send(&self, messages: Messages) {
+        let as_json = messages.to_json();
+        println!("Sending: {}", as_json);
+
         let response = self.post(Body::from(as_json), "/send").await.unwrap();
         let bytes = body_to_bytes(response.into_body()).await.unwrap();
         let body = String::from_utf8(bytes.to_vec()).expect("response was not valid utf-8");
 
-        println!("{}", body);
+        println!("Receiving: {}", body);
     }
 
     async fn post(&self, body: Body, uri: &str) -> Result<Response<Body>, HyperError> {

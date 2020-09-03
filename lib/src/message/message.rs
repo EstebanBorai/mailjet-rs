@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use serde_json::to_string as to_json_string;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Recipient {
   #[serde(rename = "Email")]
   pub email: String,
@@ -25,12 +25,12 @@ impl Recipient {
   }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Message {
   #[serde(rename = "From")]
   pub from: Recipient,
   #[serde(rename = "To")]
-  pub to: Recipient,
+  pub to: Vec<Recipient>,
   #[serde(rename = "Subject")]
   pub subject: String,
   #[serde(rename = "TextPart")]
@@ -40,13 +40,35 @@ pub struct Message {
 }
 
 impl Message {
-  pub fn new(from: Recipient, to: Recipient, subject: String, text_part: String, html_part: String) -> Self {
+  pub fn new(from: Recipient, to: Vec<Recipient>, subject: String, text_part: String, html_part: String) -> Self {
     Self {
       from,
       to,
       subject,
       text_part,
       html_part,
+    }
+  }
+
+  pub fn to_json(&self) -> String {
+    to_json_string(self).unwrap()
+  }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Messages {
+  #[serde(rename = "Messages")]
+  messages: Vec<Message>,
+}
+
+impl Messages {
+  pub fn new(message: Message) -> Self {
+    let mut messages = Vec::new();
+
+    messages.push(message);
+
+    Self {
+      messages
     }
   }
 
