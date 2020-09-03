@@ -1,8 +1,7 @@
 extern crate hyper;
-extern crate core;
 
+mod api;
 mod client;
-mod message;
 
+pub use api::*;
 pub use client::*;
-pub use message::*;

@@ -1,5 +1,6 @@
+use crate::api::common::Payload;
+use crate::client::version::SendAPIVersion;
 use http_auth_basic::Credentials;
-use crate::message::Messages;
 use hyper::{Request, Response, Body};
 use hyper::body::to_bytes as body_to_bytes;
 use hyper::client::HttpConnector;
@@ -18,7 +19,7 @@ pub struct Client {
 impl Client {
     /// Creates an authenticated Mailjet client by using the provided
     /// `public_key` and `private_key`
-    pub fn new(public_key: &str, private_key: &str) -> Self {
+    pub fn new(send_api_version: SendAPIVersion, public_key: &str, private_key: &str) -> Self {
         // Creates a basic authentication `Credentials` struct used to authenticate to the
         // Email API.
         //
@@ -35,17 +36,16 @@ impl Client {
         let encoded_credentials = keys.as_http_header();
         let https = HttpsConnector::new();
         let http_client = HyperClient::builder().build::<_, hyper::Body>(https);
-        let api_base = String::from("https://api.mailjet.com/v3.1");
 
         Self {
-            api_base,
+            api_base: send_api_version.get_api_url(),
             encoded_credentials,
             http_client,
             keys,
         }
     }
 
-    pub async fn send(&self, messages: Messages) {
+    pub async fn send(&self, messages: impl Payload) {
         let as_json = messages.to_json();
         println!("Sending: {}", as_json);
 
@@ -58,7 +58,6 @@ impl Client {
 
     async fn post(&self, body: Body, uri: &str) -> Result<Response<Body>, HyperError> {
         let uri = format!("{}{}", self.api_base, uri);
-        println!("{}", uri);
 
         let req = Request::builder()
             .method("POST")
