@@ -6,8 +6,6 @@ use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
 use hyper::Client as HyperClient;
 use hyper::Error as HyperError;
-use core::str::FromStr;
-use std::io::Read;
 
 /// A Mailjet HTTP Client
 pub struct Client {
