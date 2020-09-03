@@ -24,6 +24,11 @@ impl Client {
         //
         // Reference: https://dev.mailjet.com/email/guides/
         //
+
+        if public_key == "" || private_key == "" {
+            panic!("Invalid `public_key` or `private_key` provided");
+        }
+
         let keys = Credentials::new(public_key, private_key);
         let encoded_credentials = keys.as_http_header();
         let https = HttpsConnector::new();
