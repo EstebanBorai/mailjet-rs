@@ -1,5 +1,5 @@
 [package]
-name = "example"
+name = "basic_email_v3"
 version = "0.0.0"
 authors = ["Esteban Borai <estebanborai@gmail.com>"]
 edition = "2018"
@@ -8,5 +8,5 @@ edition = "2018"
 
 [dependencies]
 dotenv = "0.15.0"
-mailjet-rs = { path = "../lib" }
+mailjet-rs = { path = "../../lib" }
 tokio = { version = "0.2", features = ["full"] }
