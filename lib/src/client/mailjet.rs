@@ -4,7 +4,6 @@ use crate::client::response::Response as MailjetResponse;
 use crate::client::error::Error as MailjetError;
 use crate::client::status_code::StatusCode as MailjetStatusCode;
 use http_auth_basic::Credentials;
-use hyper::body::to_bytes as body_to_bytes;
 use hyper::client::HttpConnector;
 use hyper::Client as HyperClient;
 use hyper::Error as HyperError;

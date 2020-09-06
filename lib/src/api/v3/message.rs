@@ -10,7 +10,7 @@ use serde_json::to_string as to_json_string;
 /// 
 /// # Example
 /// 
-/// ```
+/// ```ignore
 /// use mailjet_rs::common::Recipient;
 /// use mailjet_rs::v3::Message;
 /// use mailjet_rs::{Client, SendAPIVersion};
@@ -35,6 +35,48 @@ use serde_json::to_string as to_json_string;
 ///     );
 /// 
 ///     client.send(message).await;
+///     Ok(())
+/// }
+/// ```
+/// 
+/// ## Send to multiple recipients
+/// 
+/// To send the same email to multiple contacts, add multiple `Recipient` intances
+/// to the `recipients` field.
+/// 
+/// Each recipient will receive a dedicated message.
+/// 
+/// ```ignore
+/// use mailjet_rs::common::Recipient;
+/// use mailjet_rs::v3::Message;
+/// use mailjet_rs::{Client, SendAPIVersion};
+/// 
+/// #[tokio::main]
+/// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+///     let client = Client::new(
+///         SendAPIVersion::V3,
+///         "public_key",
+///         "private_key",
+///     );
+/// 
+///     let recipients = vec![
+///         Recipient::new("receiver.email@mail.com"),
+///         Recipient::new("foo@bar.com"),
+///         Recipient::new("bar@baz.com")];
+/// 
+///     let message = Message::new(
+///         "your.mailjet.email@yourcompany.com",
+///         "Sender Name",
+///         Some(String::from("Testing Mailjet Rust with Send API v3 Message")),
+///         "This is a test on mailjet-rs with Send API v3 sending a basic email",
+///         Some(String::from("<h1>Some HTML to give it a try</h1>")),
+///         recipients,
+///     );
+/// 
+///     let response = client.send(message).await;
+/// 
+///     println!("{:?}", response);
+/// 
 ///     Ok(())
 /// }
 /// ```
