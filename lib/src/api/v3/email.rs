@@ -16,12 +16,12 @@ use serde_json::json;
 /// effectively exists already._
 ///
 /// # Example
-/// 
+///
 /// ```
 /// use mailjet_rs::common::Recipient;
 /// use mailjet_rs::v3::Email;
 /// use mailjet_rs::{Client, SendAPIVersion};
-/// 
+///
 /// #[tokio::main]
 /// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 ///     let client = Client::new(
@@ -29,11 +29,11 @@ use serde_json::json;
 ///         "public_key",
 ///         "private_key",
 ///     );
-/// 
+///
 ///     let to = vec![Recipient::new("foo@bar.com")];
 ///     let cc = vec![Recipient::new("bar@baz.com"), Recipient::new("boo@baz.com")];
 ///     let bcc = vec![Recipient::new("bar_baz_box@mail.com")];
-/// 
+///
 ///     let message = Email::new(
 ///         "your.mailjet.email@yourcompany.com",
 ///         "Sender Name",
@@ -44,13 +44,13 @@ use serde_json::json;
 ///         Some(cc),
 ///         Some(bcc)
 ///     );
-/// 
+///
 ///     client.send(message).await;
-/// 
+///
 ///     Ok(())
 /// }
 /// ```
-/// 
+///
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Email {
     /// The verified sender email address
@@ -104,23 +104,30 @@ impl Payload for Email {
     fn to_json(&self) -> String {
         let subject = self.subject.clone().unwrap_or(String::default());
         let html_part = self.html_part.clone().unwrap_or(String::default());
-        let to_recipients = self.to.iter().map(|r| {
-            r.as_comma_separated()
-        }).collect::<Vec<String>>().join(",");
+        let to_recipients = self
+            .to
+            .iter()
+            .map(|r| r.as_comma_separated())
+            .collect::<Vec<String>>()
+            .join(",");
 
         let mut cc_recipients = String::default();
         let mut bcc_recipients = String::default();
 
         if let Some(cc) = &self.cc {
-            cc_recipients = cc.iter().map(|r| {
-                r.as_comma_separated()
-            }).collect::<Vec<String>>().join(",");
+            cc_recipients = cc
+                .iter()
+                .map(|r| r.as_comma_separated())
+                .collect::<Vec<String>>()
+                .join(",");
         }
 
         if let Some(bcc) = &self.bcc {
-            bcc_recipients = bcc.iter().map(|r| {
-                r.as_comma_separated()
-            }).collect::<Vec<String>>().join(",");
+            bcc_recipients = bcc
+                .iter()
+                .map(|r| r.as_comma_separated())
+                .collect::<Vec<String>>()
+                .join(",");
         }
 
         let as_json = json!({

@@ -7,14 +7,14 @@ use serde_json::to_string as to_json_string;
 /// Recipients listed in the `Recipients` `Vec` will
 /// each receive a separate message without showing all other
 /// recipients.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```ignore
 /// use mailjet_rs::common::Recipient;
 /// use mailjet_rs::v3::Message;
 /// use mailjet_rs::{Client, SendAPIVersion};
-/// 
+///
 /// #[tokio::main]
 /// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 ///     let client = Client::new(
@@ -22,9 +22,9 @@ use serde_json::to_string as to_json_string;
 ///         "public_key",
 ///         "private_key",
 ///     );
-/// 
+///
 ///     let recipients = vec![Recipient::new("receiver.email@mail.com")];
-/// 
+///
 ///     let message = Message::new(
 ///         "your.mailjet.email@yourcompany.com",
 ///         "Sender Name",
@@ -33,24 +33,24 @@ use serde_json::to_string as to_json_string;
 ///         Some(String::from("<h1>Some HTML to give it a try</h1>")),
 ///         recipients,
 ///     );
-/// 
+///
 ///     client.send(message).await;
 ///     Ok(())
 /// }
 /// ```
-/// 
+///
 /// ## Send to multiple recipients
-/// 
+///
 /// To send the same email to multiple contacts, add multiple `Recipient` intances
 /// to the `recipients` field.
-/// 
+///
 /// Each recipient will receive a dedicated message.
-/// 
+///
 /// ```ignore
 /// use mailjet_rs::common::Recipient;
 /// use mailjet_rs::v3::Message;
 /// use mailjet_rs::{Client, SendAPIVersion};
-/// 
+///
 /// #[tokio::main]
 /// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 ///     let client = Client::new(
@@ -58,12 +58,12 @@ use serde_json::to_string as to_json_string;
 ///         "public_key",
 ///         "private_key",
 ///     );
-/// 
+///
 ///     let recipients = vec![
 ///         Recipient::new("receiver.email@mail.com"),
 ///         Recipient::new("foo@bar.com"),
 ///         Recipient::new("bar@baz.com")];
-/// 
+///
 ///     let message = Message::new(
 ///         "your.mailjet.email@yourcompany.com",
 ///         "Sender Name",
@@ -72,15 +72,15 @@ use serde_json::to_string as to_json_string;
 ///         Some(String::from("<h1>Some HTML to give it a try</h1>")),
 ///         recipients,
 ///     );
-/// 
+///
 ///     let response = client.send(message).await;
-/// 
+///
 ///     println!("{:?}", response);
-/// 
+///
 ///     Ok(())
 /// }
 /// ```
-/// 
+///
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Message {
     /// The verified sender email address

@@ -1,8 +1,8 @@
 use crate::api::common::Payload;
-use crate::client::version::SendAPIVersion;
-use crate::client::response::Response as MailjetResponse;
 use crate::client::error::Error as MailjetError;
+use crate::client::response::Response as MailjetResponse;
 use crate::client::status_code::StatusCode as MailjetStatusCode;
+use crate::client::version::SendAPIVersion;
 use http_auth_basic::Credentials;
 use hyper::client::HttpConnector;
 use hyper::Client as HyperClient;
@@ -53,10 +53,8 @@ impl Client {
         let (parts, body) = response.into_parts();
 
         if parts.status.is_client_error() || parts.status.is_server_error() {
-            let mailjet_error = MailjetError::from_api_response(
-                MailjetStatusCode::from(parts.status),
-                body
-            ).await;
+            let mailjet_error =
+                MailjetError::from_api_response(MailjetStatusCode::from(parts.status), body).await;
 
             return Err(mailjet_error);
         }

@@ -24,7 +24,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let message = Message::new(
         sender_email.as_str(),
         "Mailjet Rust",
-        Some(String::from("Testing Mailjet Rust with Send API v3 Message")),
+        Some(String::from(
+            "Testing Mailjet Rust with Send API v3 Message",
+        )),
         "This is a test on mailjet-rs with Send API v3 sending a basic email",
         Some(String::from("<h1>Some HTML to give it a try</h1>")),
         to,
