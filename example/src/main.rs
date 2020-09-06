@@ -30,6 +30,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         to,
     );
 
-    client.send(message).await;
+    let response = client.send(message).await;
+
+    println!("{:?}", response);
+
     Ok(())
 }

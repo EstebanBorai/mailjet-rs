@@ -1,5 +1,8 @@
 use crate::api::common::Payload;
 use crate::client::version::SendAPIVersion;
+use crate::client::response::Response as MailjetResponse;
+use crate::client::error::Error as MailjetError;
+use crate::client::status_code::StatusCode as MailjetStatusCode;
 use http_auth_basic::Credentials;
 use hyper::body::to_bytes as body_to_bytes;
 use hyper::client::HttpConnector;
@@ -45,15 +48,21 @@ impl Client {
         }
     }
 
-    pub async fn send(&self, messages: impl Payload) {
+    pub async fn send(&self, messages: impl Payload) -> Result<MailjetResponse, MailjetError> {
         let as_json = messages.to_json();
-        println!("Sending: {}", as_json);
-
         let response = self.post(Body::from(as_json), "/send").await.unwrap();
-        let bytes = body_to_bytes(response.into_body()).await.unwrap();
-        let body = String::from_utf8(bytes.to_vec()).expect("response was not valid utf-8");
+        let (parts, body) = response.into_parts();
 
-        println!("Receiving: {}", body);
+        if parts.status.is_client_error() || parts.status.is_server_error() {
+            let mailjet_error = MailjetError::from_api_response(
+                MailjetStatusCode::from(parts.status),
+                body
+            ).await;
+
+            return Err(mailjet_error);
+        }
+
+        Ok(MailjetResponse::from_api_response(body).await)
     }
 
     async fn post(&self, body: Body, uri: &str) -> Result<Response<Body>, HyperError> {
