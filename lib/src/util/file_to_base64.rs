@@ -3,8 +3,8 @@ use std::fs::read as read_file;
 use std::io::Write;
 use base64;
 
-/// Reads a `File` and retrieves a base64 representation
-/// of the file
+/// Reads a in the provided `file_path` and returns a
+/// base64 `String` representation of the `File`
 pub fn file_to_base64<P: AsRef<Path>>(file_path: P) -> String {
   let bytes = read_file(file_path).unwrap();
   let mut wrapped_writer = Vec::new();
