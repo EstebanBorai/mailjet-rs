@@ -30,7 +30,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         "my favourite text part",
         Some(String::from("<h1>helloo my friend!")),
         to,
-        
         Some(cc),
         Some(bcc)
     );

@@ -1,6 +1,6 @@
 use crate::api::common::{Payload, Recipient};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, to_string as to_json_string};
+use serde_json::json;
 
 /// Mailjet's SendAPI V3 Email
 ///
@@ -15,6 +15,42 @@ use serde_json::{json, to_string as to_json_string};
 /// a welcome email and then you're trying to add the email to a list as the contact
 /// effectively exists already._
 ///
+/// # Example
+/// 
+/// ```
+/// use mailjet_rs::common::Recipient;
+/// use mailjet_rs::v3::Email;
+/// use mailjet_rs::{Client, SendAPIVersion};
+/// 
+/// #[tokio::main]
+/// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+///     let client = Client::new(
+///         SendAPIVersion::V3,
+///         "public_key",
+///         "private_key",
+///     );
+/// 
+///     let to = vec![Recipient::new("foo@bar.com")];
+///     let cc = vec![Recipient::new("bar@baz.com"), Recipient::new("boo@baz.com")];
+///     let bcc = vec![Recipient::new("bar_baz_box@mail.com")];
+/// 
+///     let message = Email::new(
+///         "your.mailjet.email@yourcompany.com",
+///         "Sender Name",
+///         "Subject",
+///         "Email Content",
+///         Some(String::from("<h1>HTML Content for Email</h1>")),
+///         to,
+///         Some(cc),
+///         Some(bcc)
+///     );
+/// 
+///     client.send(message).await;
+/// 
+///     Ok(())
+/// }
+/// ```
+/// 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Email {
     /// The verified sender email address
