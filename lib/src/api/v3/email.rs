@@ -17,7 +17,7 @@ use serde_json::json;
 ///
 /// # Example
 ///
-/// ```
+/// ```ignore
 /// use mailjet_rs::common::Recipient;
 /// use mailjet_rs::v3::Email;
 /// use mailjet_rs::{Client, SendAPIVersion};

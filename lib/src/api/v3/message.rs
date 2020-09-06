@@ -1,4 +1,4 @@
-use crate::v3::{Attachments, InlineAttachments};
+use crate::v3::{Attachment, InlineAttachments};
 use crate::api::common::{Payload, Recipient};
 use serde::{Deserialize, Serialize};
 use serde_json::to_string as to_json_string;
@@ -102,7 +102,7 @@ pub struct Message {
     #[serde(rename = "Recipients")]
     pub recipients: Vec<Recipient>,
     #[serde(rename = "Attachments")]
-    pub attachments: Option<Vec<Attachments>>,
+    pub attachments: Option<Vec<Attachment>>,
     #[serde(rename = "Inline_attachments")]
     pub inline_attachments: Option<Vec<InlineAttachments>>,
 }
@@ -128,13 +128,20 @@ impl Message {
         }
     }
 
-    // pub fn attach<'a>(&mut self, file: &'a File) -> Result<(), ()> {
-    //     let metadata = file.metadata().unwrap();
-    //     let filename = metadata.len();
+    pub fn attach(&mut self, attachment: Attachment) {
+        // if theres no attachments already
+        // initialize the attachments vector
+        if self.attachments.is_none() {
+            let mut attachments = Vec::new();
 
+            attachments.push(attachment);
+            self.attachments = Some(attachments);
+        } else {
+            let attachments = self.attachments.clone();
 
-    //     Ok(())
-    // }
+            attachments.push(attachment);
+        }
+    }
 }
 
 impl Payload for Message {

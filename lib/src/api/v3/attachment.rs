@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-/// Attachments to a email which should be clicked in
-/// order to display
+/// An email attachment
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Attachments {
+pub struct Attachment {
   #[serde(rename = "Content-type")]
   pub content_type: String,
   #[serde(rename = "Filename")]
