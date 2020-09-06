@@ -25,12 +25,3 @@ pub struct InlineAttachments {
   pub filename: String,
   pub content: String,
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-/// Email Attachment
-pub enum Attachment {
-  #[serde(rename = "Attachments")]
-  Attachments(Vec<Attachments>),
-  #[serde(rename = "Inline_attachments")]
-  InlineAttachments(InlineAttachments)
-}
