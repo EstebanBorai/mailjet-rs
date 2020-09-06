@@ -28,6 +28,10 @@ impl Recipient {
         }
     }
 
+    /// Creates a `Vec<Recipient` from an string slice of comma separated
+    /// emails.
+    /// 
+    /// This function does not support recipients with name provided as string.
     pub fn from_comma_separated(recipients: &str) -> Vec<Self> {
         let as_string_vec = recipients.split(",");
 
@@ -37,8 +41,12 @@ impl Recipient {
             .collect::<Vec<Recipient>>()
     }
 
+    /// Creates a `String` of recipients separated by comma.
+    /// 
+    /// # Example
+    /// 
+    /// "John Doe" &lt;john@example.com&lt;
     pub fn as_comma_separated(&self) -> String {
-        // "John Doe" &lt;john@example.com&lt;
         let mut string = String::default();
 
         if self.name != String::default() {
