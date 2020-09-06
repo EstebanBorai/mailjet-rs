@@ -1,7 +1,7 @@
-use mailjet_rs::{Client, SendAPIVersion};
-use mailjet_rs::v3_1::{Messages, Message};
-use mailjet_rs::common::Recipient;
 use dotenv;
+use mailjet_rs::common::Recipient;
+use mailjet_rs::v3::Message;
+use mailjet_rs::{Client, SendAPIVersion};
 use std::env;
 
 #[tokio::main]
@@ -13,19 +13,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let sender_email = env::var("SENDER_EMAIL").expect("Unable to find SENDER_EMAIL");
     let email = env::var("RECIPIENT_EMAIL").expect("Unable to find RECIPIENT_EMAIL");
 
-    let client_v3_1 = Client::new(SendAPIVersion::V3_1, public_key.as_str(), private_key.as_str());
+    let client = Client::new(
+        SendAPIVersion::V3,
+        public_key.as_str(),
+        private_key.as_str(),
+    );
 
-    let from = Recipient::new(sender_email, None);
-    let to = vec![ Recipient::new(email, None) ];
-    
-    let message = Message::new(from,
-        to, 
-        None, 
-        String::from("Hello, World! I'm the body of this email!"), 
-        None);
+    let to = vec![Recipient::new(email.as_str())];
 
-    let messages_list = Messages::new(message);
+    let message = Message::new(
+        sender_email.as_str(),
+        "Rust Venezuela",
+        Some(String::from("Come join us and have fun!")),
+        "The text part!",
+        None,
+        to,
+    );
 
-    client_v3_1.send(messages_list).await;
+    client.send(message).await;
     Ok(())
 }

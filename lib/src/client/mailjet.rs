@@ -1,12 +1,12 @@
 use crate::api::common::Payload;
 use crate::client::version::SendAPIVersion;
 use http_auth_basic::Credentials;
-use hyper::{Request, Response, Body};
 use hyper::body::to_bytes as body_to_bytes;
 use hyper::client::HttpConnector;
-use hyper_tls::HttpsConnector;
 use hyper::Client as HyperClient;
 use hyper::Error as HyperError;
+use hyper::{Body, Request, Response};
+use hyper_tls::HttpsConnector;
 
 /// A Mailjet HTTP Client
 pub struct Client {
