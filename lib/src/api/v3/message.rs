@@ -1,6 +1,11 @@
+use crate::v3::{Attachment, Attachments, InlineAttachments};
 use crate::api::common::{Payload, Recipient};
 use serde::{Deserialize, Serialize};
 use serde_json::to_string as to_json_string;
+use std::fs::{File, metadata as file_metadata};
+
+/// The max size of a single attachment in bytes
+const MAX_ATTACHMENT_SIZE_BYTES: u64 = 15728640;
 
 /// Mailjet's SendAPI V3 Message
 ///
@@ -100,6 +105,7 @@ pub struct Message {
     pub html_part: Option<String>,
     #[serde(rename = "Recipients")]
     pub recipients: Vec<Recipient>,
+    pub attachments: Option<Vec<Attachment>>,
 }
 
 impl Message {
@@ -118,7 +124,20 @@ impl Message {
             text_part: String::from(text_part),
             html_part,
             recipients,
+            attachments: None
         }
+    }
+
+    pub fn attach<'a>(&mut self, attachment: Attachments, file: &'a File) -> Result<(), ()> {
+        let metadata = file.metadata().unwrap();
+        let filename = metadata.len();
+
+        if filename > MAX_ATTACHMENT_SIZE_BYTES {
+            // returns error
+        }
+
+
+        Ok(())
     }
 }
 
