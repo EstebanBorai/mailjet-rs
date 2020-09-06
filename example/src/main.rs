@@ -1,6 +1,6 @@
 use dotenv;
 use mailjet_rs::common::Recipient;
-use mailjet_rs::v3::Message;
+use mailjet_rs::v3::Email;
 use mailjet_rs::{Client, SendAPIVersion};
 use std::env;
 
@@ -20,14 +20,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     );
 
     let to = vec![Recipient::new(email.as_str())];
+    let cc = vec![Recipient::new(email.as_str())];
+    let bcc = vec![Recipient::new(email.as_str())];
 
-    let message = Message::new(
+    let message = Email::new(
         sender_email.as_str(),
         "Rust Venezuela",
-        Some(String::from("Come join us and have fun!")),
-        "The text part!",
-        None,
+        Some(String::from("Testing Email")),
+        "my favourite text part",
+        Some(String::from("<h1>helloo my friend!")),
         to,
+        
+        Some(cc),
+        Some(bcc)
     );
 
     client.send(message).await;

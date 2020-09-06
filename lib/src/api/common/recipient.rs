@@ -54,8 +54,7 @@ impl Recipient {
             string += " ";
         }
 
-        string += &format!("&lt;{}&gt;", self.email);
-
+        string += &format!("<{}>", self.email);
         string
     }
 }
@@ -85,8 +84,8 @@ mod tests {
             Recipient::new("foo@bar.com"),
         ];
         let want = vec![
-            String::from("\"The Rust Programming Language\" &lt;rust@rust-lang.org&gt;"),
-            String::from("&lt;foo@bar.com&gt;"),
+            String::from("\"The Rust Programming Language\" <rust@rust-lang.org>"),
+            String::from("<foo@bar.com>"),
         ];
 
         have.into_iter().enumerate().for_each(|(index, value)| {
