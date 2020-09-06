@@ -98,17 +98,6 @@ impl Payload for Email {
             "Bcc": bcc_recipients,
         });
 
-        println!("{}", as_json.to_string());
-
         as_json.to_string()
     }
 }
-
-// "FromEmail":"pilot@mailjet.com",
-// "FromName":"Mailjet Pilot",
-// "Subject":"Your email flight plan!",
-// "Text-part":"Dear passenger, welcome to Mailjet! May the delivery force be with you!",
-// "Html-part":"<h3>Dear passenger, welcome to <a href=\"https://www.mailjet.com/\">Mailjet</a>!<br />May the delivery force be with you!",
-// "To":"Name <passenger@mailjet.com>, Name2 <passenger2@mailjet.com>",
-// "CC":"Name3 <passenger@mailjet.com>"
-// }'
