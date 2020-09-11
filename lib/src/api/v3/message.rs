@@ -128,24 +128,44 @@ impl Message {
         }
     }
 
+    /// Attach an `Attachment` to the `Message`
     pub fn attach(&mut self, attachment: Attachment) {
-        // if theres no attachments already
-        // initialize the attachments vector
-        if self.attachments.is_none() {
-            let mut attachments = Vec::new();
-
-            attachments.push(attachment);
-            self.attachments = Some(attachments);
-        } else {
-            let attachments = self.attachments.clone();
-
-            attachments.push(attachment);
-        }
+        self.attachments.get_or_insert_with(Vec::new)
+            .push(attachment)
     }
 }
 
 impl Payload for Message {
     fn to_json(&self) -> String {
         to_json_string(self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn creates_a_message_instance() {
+        let from_email = "test@test.com";
+        let from_name = "Test Name";
+        let subject = "Test Subject";
+        let text_part = "Text Part";
+        let html_part = "<h1>HTML Part</h1>";
+
+        let message = Message::new(
+            from_email,
+            from_name,
+            Some(String::from(subject)),
+            text_part,
+            Some(String::from(html_part)),
+            vec![Recipient::new("recipient@test.com")]);
+
+        assert_eq!(message.from_email, String::from(from_email));
+        assert_eq!(message.from_name, String::from(from_name));
+        assert_eq!(message.subject, Some(String::from(subject)));
+        assert_eq!(message.text_part, String::from(text_part));
+        assert_eq!(message.html_part, Some(String::from(html_part)));
+        assert_eq!(message.recipients.len(), 1);
     }
 }
