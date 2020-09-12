@@ -1,6 +1,6 @@
 <div>
   <div align="center" style="display: block; text-align: center;">
-    <img src="https://via.placeholder.com/120" height="120" width="120" />
+    <img src="https://raw.githubusercontent.com/EstebanBorai/mailjet-rs/main/assets/mailjet-rs.png" height="120" width="120" />
   </div>
   <h1 align="center">mailjet-rs</h1>
   <h4 align="center">Mailjet API Client for Rust</h4>
