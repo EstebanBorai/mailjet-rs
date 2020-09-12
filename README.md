@@ -33,3 +33,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 ```
 
 [Example Source Code](https://github.com/EstebanBorai/mailjet-rs/blob/main/example/src/main.png)
+
+## Release
+
+To release a new version you must tag with git and push to the `main` branch.
+
+```bash
+git tag -a v0.1.0 -m "First Release"
+git push origin main --follow-tags
+```
