@@ -33,9 +33,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     );
 
     let attachment = Attachment::new(
-        String::from("text/plain"),
-        String::from("test.txt"),
-        String::from("VGhpcyBpcyB5b3VyIGF0dGFjaGVkIGZpbGUhISEK")
+        "text/plain",
+        "test.txt",
+        "VGhpcyBpcyB5b3VyIGF0dGFjaGVkIGZpbGUhISEK",
     );
 
     message.attach(attachment);
