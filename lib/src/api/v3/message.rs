@@ -1,6 +1,6 @@
 use crate::v3::Attachment;
-use crate::api::common::{Payload, Recipient};
-use serde::{Deserialize, Serialize};
+use crate::api::common::{Payload, Recipient, Recipients};
+use serde::{Deserialize, Serialize, Serializer};
 use serde_json::to_string as to_json_string;
 
 /// Mailjet's SendAPI V3 Message
@@ -84,6 +84,21 @@ use serde_json::to_string as to_json_string;
 ///
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Message {
+    /// The recipients to send the `Message`
+    #[serde(rename = "To")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "serialize_email_field")]
+    pub to: Option<Recipients>,
+    /// The carbon copy recipients
+    #[serde(rename = "Cc")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "serialize_email_field")]
+    pub cc: Option<Recipients>,
+    /// The blind carbon copy recipients
+    #[serde(rename = "Bcc")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "serialize_email_field")]
+    pub bcc: Option<Recipients>,
     /// The verified sender email address
     #[serde(rename = "FromEmail")]
     pub from_email: String,
@@ -95,15 +110,20 @@ pub struct Message {
     pub subject: Option<String>,
     /// The raw text content of the email
     #[serde(rename = "Text-part")]
-    pub text_part: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text_part: Option<String>,
     /// The HTML content of the email
     #[serde(rename = "Html-part")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub html_part: Option<String>,
     #[serde(rename = "Recipients")]
-    pub recipients: Vec<Recipient>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recipients: Option<Recipients>,
     #[serde(rename = "Attachments")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub attachments: Option<Vec<Attachment>>,
     #[serde(rename = "Inline_attachments")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub inline_attachments: Option<Vec<Attachment>>,
 }
 
@@ -112,20 +132,69 @@ impl Message {
         from_email: &str,
         from_name: &str,
         subject: Option<String>,
-        text_part: &str,
-        html_part: Option<String>,
-        recipients: Vec<Recipient>,
+        text_part: Option<String>
     ) -> Self {
         Self {
             from_email: String::from(from_email),
             from_name: String::from(from_name),
+            text_part,
+            to: None,
+            cc: None,
+            bcc: None,
             subject,
-            text_part: String::from(text_part),
-            html_part,
-            recipients,
+            html_part: None,
+            recipients: None,
             attachments: None,
             inline_attachments: None,
         }
+    }
+
+    /// Pushes a `Recipient` to the `Recipients` field of the `Message`
+    pub fn push_recipient(&mut self, recipient: Recipient) {
+        if self.have_email_fields_filled() {
+            panic!(r#"Attempt to define `Recipients` fields with any of `To`, `Cc` and `Bcc` already defined. You must either define one or the other"#)
+        }
+
+        self.recipients.get_or_insert_with(Vec::new)
+            .push(recipient);
+    }
+
+    /// Pushes every `Recipient` object into the `Recipients` field
+    /// of the `Message`
+    pub fn push_many_recipients(&mut self, recipients: Recipients) {
+        if self.have_email_fields_filled() {
+            panic!(r#"Attempt to define `Recipients` fields with any of `To`, `Cc` and `Bcc` already defined. You must either define one or the other"#)
+        }
+
+        recipients.into_iter().for_each(|recipient| {
+            self.recipients.get_or_insert_with(Vec::new).push(recipient);
+        });
+    }
+
+    /// Set the `To`, `Cc` and `Bcc` fields for the `Message`.
+    /// 
+    /// When calling this method any of the fields will be replaced
+    /// with the values provided on the call.
+    /// 
+    /// ## Panic
+    /// 
+    /// When calling this method with `Recipients` defined (with a value different to `None`) this
+    /// method will panic.
+    /// 
+    /// This is because Mailjet's Send API v3 documentation expects one of two ways to define recipients
+    /// but never both:
+    /// 
+    /// > Optionally, in place of Recipients, you can use To, Cc and Bcc properties. `To`, `Cc` and `Bcc` can't be used in conjunction with `Recipients`
+    /// 
+    /// [Mailjet SendAPI V3 Documentation](https://dev.mailjet.com/email/guides/send-api-V3/#send-a-basic-email)
+    pub fn set_receivers(&mut self, to: Recipients, cc: Option<Recipients>, bcc: Option<Recipients>) {
+        if self.recipients.is_some() {
+            panic!(r#"Attempt to define `To`, `Cc` and `Bcc` fields with `Recipients` already defined. You must either define one or the other"#)
+        }
+
+        self.to = Some(to);
+        self.cc = cc;
+        self.bcc = bcc;
     }
 
     /// Attach an `Attachment` to the `Message`
@@ -156,39 +225,35 @@ impl Message {
         self.inline_attachments.get_or_insert_with(Vec::new)
             .push(attachment)
     }
+
+    /// Checks for any of `To`, `Cc` or `Bcc` to be `Some`.
+    /// 
+    /// Used to validate if the `Recipients` could be filled or not
+    fn have_email_fields_filled(&self) -> bool {
+        self.to.is_some() || self.cc.is_some() || self.bcc.is_some()
+    }
+}
+
+fn serialize_email_field<'a, S>(recipients: &'a std::option::Option<Recipients>, s: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    if recipients.is_some() {
+        let repc = recipients.as_deref().unwrap();
+
+        let as_comma_separated = repc.into_iter()
+            .map(|v| v.as_comma_separated())
+            .collect::<Vec<String>>()
+            .join(",");
+
+        return s.serialize_str(as_comma_separated.as_str());
+    }
+
+    s.serialize_none()
 }
 
 impl Payload for Message {
     fn to_json(&self) -> String {
         to_json_string(self).unwrap()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn creates_a_message_instance() {
-        let from_email = "test@test.com";
-        let from_name = "Test Name";
-        let subject = "Test Subject";
-        let text_part = "Text Part";
-        let html_part = "<h1>HTML Part</h1>";
-
-        let message = Message::new(
-            from_email,
-            from_name,
-            Some(String::from(subject)),
-            text_part,
-            Some(String::from(html_part)),
-            vec![Recipient::new("recipient@test.com")]);
-
-        assert_eq!(message.from_email, String::from(from_email));
-        assert_eq!(message.from_name, String::from(from_name));
-        assert_eq!(message.subject, Some(String::from(subject)));
-        assert_eq!(message.text_part, String::from(text_part));
-        assert_eq!(message.html_part, Some(String::from(html_part)));
-        assert_eq!(message.recipients.len(), 1);
     }
 }
