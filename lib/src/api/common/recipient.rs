@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+/// Alias type for `Vec<Recipient>`
+pub type Recipients = Vec<Recipient>;
+
 /// Email recipient composed by an email address and
 /// the name of the owner
 #[derive(Debug, Serialize, Deserialize)]

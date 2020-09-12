@@ -24,10 +24,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let mut message = Message::new(
         sender_email.as_str(),
         "Mailjet Rust",
-        Some(String::from("Your email flight plan!")),
-        "Dear passenger, welcome to Mailjet! May the delivery force be with you!",
-        Some(String::from("<h3>Dear passenger, welcome to <img src=\"cid:logo.png\"> <a href=\"https://www.mailjet.com/\">Mailjet</a>!<br />May the delivery force be with you!")),
-        to,
+        Some(String::from("May the delivery force be with you!")),
+        None,
     );
 
     let attachment = Attachment::new(

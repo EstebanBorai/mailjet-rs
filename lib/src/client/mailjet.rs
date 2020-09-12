@@ -49,6 +49,9 @@ impl Client {
 
     pub async fn send(&self, messages: impl Payload) -> Result<MailjetResponse, MailjetError> {
         let as_json = messages.to_json();
+
+        println!("{}", as_json);
+
         let response = self.post(Body::from(as_json), "/send").await.unwrap();
         let (parts, body) = response.into_parts();
 
