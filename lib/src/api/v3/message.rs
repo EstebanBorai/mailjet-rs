@@ -129,12 +129,29 @@ impl Message {
     }
 
     /// Attach an `Attachment` to the `Message`
+    /// The recipient of a email with attachment will
+    /// have to click to see it. The inline attachment can be
+    /// visible directly in the body of the message depending
+    /// of the email client support.
+    /// 
+    /// The content will need to be Base64 encoded. You will need to specify the
+    /// MIME type and a file name.
+    ///
+    /// Remember to keep the size of your attachements low and not to exceed 15 MB.
     pub fn attach(&mut self, attachment: Attachment) {
         self.attachments.get_or_insert_with(Vec::new)
             .push(attachment)
     }
 
     /// Attach an `Attachment` to the `Message`
+    /// When using an inline Attachment, it's possible to insert
+    /// the file inside the HTML code of the email by using cid:FILENAME.EXT
+    /// where FILENAME.EXT is the Filename specified in the declaration of the Attachment.
+    /// 
+    /// The content will need to be Base64 encoded. You will need to specify the
+    /// MIME type and a file name.
+    ///
+    /// Remember to keep the size of your attachements low and not to exceed 15 MB.
     pub fn attach_inline(&mut self, attachment: Attachment) {
         self.inline_attachments.get_or_insert_with(Vec::new)
             .push(attachment)
