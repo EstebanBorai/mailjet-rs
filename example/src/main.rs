@@ -28,6 +28,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         None,
     );
 
+    message.push_many_recipients(to);
+
     let attachment = Attachment::new(
         "image/png",
         "logo.png",
