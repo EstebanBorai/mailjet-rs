@@ -6,6 +6,13 @@
   <h4 align="center">Mailjet API Client for Rust</h4>
 </div>
 
+<div align="center">
+
+  [![Crates.io](https://img.shields.io/crates/v/mailjet-rs.svg)](https://crates.io/crates/mailjet-rs)
+  [![Documentation](https://docs.rs/mailjet-rs/badge.svg)](https://docs.rs/mailjet-rs)
+
+</div>
+
 ## Installation
 
 ```toml
