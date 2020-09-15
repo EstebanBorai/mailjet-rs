@@ -1,0 +1,34 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [v0.1.2] - 2020-09-15
+### Added
+- CI workflows
+- Unit tests
+
+### Improved
+- Documentation
+- Use MIT License to match Mailjet
+
+## [v0.1.1] - 2020-09-13
+### Added
+- Crates and Docs Badges to README
+
+### Improved
+- Documentation
+
+## [v0.1.0] - 2020-09-12
+### Added
+- Support for template variables (`Vars` fields)
+
+## [v0.0.0-apiv0.1.0] - 2020-09-12
+### Removed
+- Remove `Email` struct in favor of `Message` struct
+
+## [v0.0.0-apiv0.0.0] - 2020-09-12
+### Added
+- API Draft with compatibility for Send API Version 3
+- Rust/Mailjet Fan Logo

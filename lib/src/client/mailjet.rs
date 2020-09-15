@@ -10,7 +10,18 @@ use hyper::Error as HyperError;
 use hyper::{Body, Request, Response};
 use hyper_tls::HttpsConnector;
 
-/// A Mailjet HTTP Client
+/// Mailjet's Email API uses the API keys provided by Mailjet for your account [here](https://app.mailjet.com/account/api_keys).
+///
+/// These are used to create an instance of the `Client` as follows:
+///
+/// ```ignore
+/// let client = Client::new(
+///     SendAPIVersion::V3,
+///     "public_key",
+///     "private_key",
+/// );
+/// ```
+///
 pub struct Client {
     pub keys: Credentials,
     pub encoded_credentials: String,
@@ -77,5 +88,34 @@ impl Client {
             .expect("Failed to build POST request");
 
         self.http_client.request(req).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_creates_a_client_instance_send_api_v3() {
+        let have = Client::new(SendAPIVersion::V3, "public_key", "private_key");
+
+        assert_eq!(have.api_base, "https://api.mailjet.com/v3");
+        assert_eq!(have.keys.user_id, "public_key");
+        assert_eq!(have.keys.password, "private_key");
+    }
+
+    #[test]
+    fn it_creates_a_client_instance_send_api_v3_1() {
+        let have = Client::new(SendAPIVersion::V3_1, "public_key", "private_key");
+
+        assert_eq!(have.api_base, "https://api.mailjet.com/v3.1");
+        assert_eq!(have.keys.user_id, "public_key");
+        assert_eq!(have.keys.password, "private_key");
+    }
+
+    #[test]
+    #[should_panic(expected = "Invalid `public_key` or `private_key` provided")]
+    fn it_panics_if_invalid_keys_are_provided() {
+        Client::new(SendAPIVersion::V3_1, "", "");
     }
 }

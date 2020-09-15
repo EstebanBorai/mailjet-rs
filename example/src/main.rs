@@ -1,5 +1,5 @@
 use mailjet_rs::common::Recipient;
-use mailjet_rs::v3::{Message, Attachment};
+use mailjet_rs::v3::{Attachment, Message};
 use mailjet_rs::{Client, SendAPIVersion};
 use mailjet_rs::{Map, Value};
 
@@ -8,28 +8,23 @@ const MAILJET_LOGO_BASE64: &str = "iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DA
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-
     // Create an instance of the Mailjet API client
     // used to send the `Message` and also define your API
     // credentials
-    let client = Client::new(
-        SendAPIVersion::V3,
-        "public_key",
-        "private_key",
-    );
+    let client = Client::new(SendAPIVersion::V3, "public_key", "private_key");
 
     // Create your a `Message` instance with the minimum required values
     let mut message = Message::new(
         "mailjet_sender@company.com",
         "Mailjet Rust",
         Some("Your email flight plan!".to_string()),
-        Some("Dear passenger, welcome to Mailjet! May the delivery force be with you!".to_string())
+        Some("Dear passenger, welcome to Mailjet! May the delivery force be with you!".to_string()),
     );
 
     message.push_recipient(Recipient::new("receiver@company.com"));
 
     // Set some HTML for your email
-    // 
+    //
     // Note that here we are using `cid:logo.png` as the src value for our image
     // this is using the `inline_attachment` with `filename` "logo.png" as the
     // image source
@@ -38,10 +33,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // Attach inline files providing its base64 representation
     // content-type and a name.
     // The name of the file can be used to reference this file in your HTML content
-    let mailjet_logo_inline = Attachment::new(
-      "image/png", 
-      "logo.png", 
-      MAILJET_LOGO_BASE64);
+    let mailjet_logo_inline = Attachment::new("image/png", "logo.png", MAILJET_LOGO_BASE64);
 
     // Attach the `Attachment` as an Inline Attachment
     // this function can also be used to attach common Attachments
@@ -49,9 +41,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     // Creates a txt file Attachment
     let txt_file_attachment = Attachment::new(
-      "text/plain", 
-      "test.txt", 
-      "VGhpcyBpcyB5b3VyIGF0dGFjaGVkIGZpbGUhISEK");
+        "text/plain",
+        "test.txt",
+        "VGhpcyBpcyB5b3VyIGF0dGFjaGVkIGZpbGUhISEK",
+    );
 
     // Attaches the TXT file as an email Attachment
     message.attach(txt_file_attachment);

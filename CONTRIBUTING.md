@@ -1,7 +1,5 @@
 # Contributing to mailjet-rs
 
-First off, thank you so much for considering contributing to mailjet-rs. This is a scrappy project trying to make JavaScript runtimes fun. The scope and direction of the project is fairly limited at this time, but any contributions are greatly appreciated.
-
 * [Code of Conduct](#code-of-conduct)
 * [Pull Requests](#pull-requests)
 * [Developer's Certificate of Origin 1.1](#developers-certificate-of-origin)
@@ -9,10 +7,9 @@ First off, thank you so much for considering contributing to mailjet-rs. This is
 ## [Code of Conduct](./CODE_OF_CONDUCT.md)
 
 The mailjet-rs project has a [Code of Conduct](./CODE_OF_CONDUCT.md). All
-individuals participating in the mailjet-rs.github.io repo and the
-mailjet-rs organization will be expected to abide by the Code of Conduct.
+individuals participating in the mailjet-rs repo will be expected to abide by the Code of Conduct.
 Violating the Code of Conduct will result in action ranging from a conversation
-about behavior to being permanently banned from the mailjet-rs organization.
+about behavior to being permanently banned from the mailjet-rs repository.
 
 ### The Spirit of the law
 

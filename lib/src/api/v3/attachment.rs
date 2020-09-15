@@ -1,8 +1,24 @@
 use serde::{Deserialize, Serialize};
 
 /// An email attachment for both inline and not inline
-/// attachment
-#[derive(Debug, Serialize, Deserialize)]
+/// attachments
+///
+/// This struct is set either behind the `Attachments` or
+/// `Inline_attachments` to the `Message`.
+///
+/// ## Attachments
+///
+/// ```json
+/// "Attachments":[{"Content-type":"text/plain","Filename":"test.txt","content":"VGhpc..."}]
+/// ```
+///
+/// ## Inline Attachments
+///
+/// ```json
+/// "Inline_attachments":[{"Content-type":"image/png","Filename":"logo.png","content":"iVBOR..."}]
+/// ```
+///
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Attachment {
     #[serde(rename = "Content-type")]
     pub content_type: String,
@@ -12,6 +28,7 @@ pub struct Attachment {
 }
 
 impl Attachment {
+    /// Creates a new `Attachment` instance
     pub fn new(content_type: &str, filename: &str, content: &str) -> Self {
         Self {
             content_type: String::from(content_type),
