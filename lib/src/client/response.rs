@@ -16,6 +16,20 @@ pub struct Sent {
 }
 
 /// Response from Mailjet when consuming the Send API
+///
+/// `Response` struct represents Mailjet's Send API V3 response
+/// for the `send` enpoint.
+///
+/// ```json
+///  {
+///    "Sent": [
+///      {
+///        "Email": "passenger@mailjet.com",
+///        "MessageID": 111111111111111
+///      }
+///    ]
+///  }
+/// ```
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Response {
     #[serde(rename = "Sent")]
