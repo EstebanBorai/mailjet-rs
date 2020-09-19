@@ -713,3 +713,4 @@ mod tests {
         assert_eq!(message.have_email_fields_filled(), true);
     }
 }
+
