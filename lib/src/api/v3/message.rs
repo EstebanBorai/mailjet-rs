@@ -352,11 +352,11 @@ impl Message {
     /// Creates a new `Message` Send API v3 instance
     /// with the minimum requirements for a `Message`
     /// and remaining fields set as `None`.
-    /// 
+    ///
     /// Note that recipients must be defined later,
     /// either by using `push_recipient`, `push_many_recipients` or
     /// `set_receivers`.
-    /// 
+    ///
     pub fn new(
         from_email: &str,
         from_name: &str,
@@ -386,7 +386,7 @@ impl Message {
     /// Pushes a `Recipient` to the `Recipients` field of the `Message`
     pub fn push_recipient(&mut self, recipient: Recipient) {
         if self.have_email_fields_filled() {
-            panic!(PUSHING_RECIPIENTS_WITH_RECEIVERS_ERROR_MESSAGE);
+            panic!("{}", PUSHING_RECIPIENTS_WITH_RECEIVERS_ERROR_MESSAGE);
         }
 
         self.recipients.get_or_insert_with(Vec::new).push(recipient);
@@ -396,7 +396,7 @@ impl Message {
     /// of the `Message`
     pub fn push_many_recipients(&mut self, recipients: Recipients) {
         if self.have_email_fields_filled() {
-            panic!(PUSHING_RECIPIENTS_WITH_RECEIVERS_ERROR_MESSAGE);
+            panic!("{}", PUSHING_RECIPIENTS_WITH_RECEIVERS_ERROR_MESSAGE);
         }
 
         recipients.into_iter().for_each(|recipient| {
@@ -427,7 +427,7 @@ impl Message {
         bcc: Option<Recipients>,
     ) {
         if self.recipients.is_some() {
-            panic!(SETTING_RECEIVERS_WITH_RECIPIENTS_ERROR_MESSAGE);
+            panic!("{}", SETTING_RECEIVERS_WITH_RECIPIENTS_ERROR_MESSAGE);
         }
 
         self.to = Some(to);
@@ -522,8 +522,8 @@ impl Message {
     }
 }
 
-fn serialize_email_field<'a, S>(
-    recipients: &'a std::option::Option<Recipients>,
+fn serialize_email_field<S>(
+    recipients: &std::option::Option<Recipients>,
     s: S,
 ) -> Result<S::Ok, S::Error>
 where
@@ -533,7 +533,7 @@ where
         let repc = recipients.as_deref().unwrap();
 
         let as_comma_separated = repc
-            .into_iter()
+            .iter()
             .map(|v| v.as_comma_separated())
             .collect::<Vec<String>>()
             .join(",");
@@ -557,10 +557,11 @@ mod tests {
     #[test]
     fn it_creates_a_message_instance() {
         let message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
         assert_eq!(message.from_email, "test@company.com".to_string());
         assert_eq!(message.from_name, "Company".to_string());
@@ -575,74 +576,72 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "Attempt to define `Recipients` fields with any of `To`, `Cc` and `Bcc` already defined. You must either define one or the other")]
+    #[should_panic(
+        expected = "Attempt to define `Recipients` fields with any of `To`, `Cc` and `Bcc` already defined. You must either define one or the other"
+    )]
     fn it_panics_if_push_recipients_with_receivers() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
-        message.set_receivers(
-            vec![], 
-            None,
-            None);
-        
+        message.set_receivers(vec![], None, None);
+
         message.push_recipient(Recipient::new("test@company.com"));
     }
 
     #[test]
-    #[should_panic(expected = "Attempt to define `Recipients` fields with any of `To`, `Cc` and `Bcc` already defined. You must either define one or the other")]
+    #[should_panic(
+        expected = "Attempt to define `Recipients` fields with any of `To`, `Cc` and `Bcc` already defined. You must either define one or the other"
+    )]
     fn it_panics_if_push_many_recipients_with_receivers() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
-        message.set_receivers(
-            vec![], 
-            None,
-            None);
-        
+        message.set_receivers(vec![], None, None);
+
         message.push_many_recipients(vec![Recipient::new("test@company.com")]);
     }
 
     #[test]
-    #[should_panic(expected = "Attempt to define `To`, `Cc` and `Bcc` fields with `Recipients` already defined. You must either define one or the other")]
+    #[should_panic(
+        expected = "Attempt to define `To`, `Cc` and `Bcc` fields with `Recipients` already defined. You must either define one or the other"
+    )]
     fn it_panics_if_setting_receivers_with_recipients() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
         message.push_recipient(Recipient::new("test@company.com"));
 
-        message.set_receivers(
-            vec![], 
-            None,
-            None);
+        message.set_receivers(vec![], None, None);
     }
 
     #[test]
     fn it_attaches_an_attachment() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
-        let attachment = Attachment::new(
-            "text/plain", 
-            "filename", 
-            "base64");
+        let attachment = Attachment::new("text/plain", "filename", "base64");
 
         message.attach(attachment);
-        
+
         let message_attachment = message.attachments.unwrap();
         let message_attachment = message_attachment.get(0).unwrap();
-        
+
         assert_eq!(message_attachment.content_type, "text/plain");
         assert_eq!(message_attachment.filename, "filename");
         assert_eq!(message_attachment.content, "base64");
@@ -651,21 +650,19 @@ mod tests {
     #[test]
     fn it_attaches_an_inline_attachment() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
-        let attachment = Attachment::new(
-            "text/plain", 
-            "filename", 
-            "base64");
+        let attachment = Attachment::new("text/plain", "filename", "base64");
 
         message.attach_inline(attachment);
-        
+
         let message_attachment = message.inline_attachments.unwrap();
         let message_attachment = message_attachment.get(0).unwrap();
-        
+
         assert_eq!(message_attachment.content_type, "text/plain");
         assert_eq!(message_attachment.filename, "filename");
         assert_eq!(message_attachment.content, "base64");
@@ -674,10 +671,11 @@ mod tests {
     #[test]
     fn it_sets_template_id() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
         message.set_template_id(1);
 
@@ -688,10 +686,11 @@ mod tests {
     #[test]
     fn it_sets_event_payload() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
         message.set_custom_id("1".to_string());
 
@@ -701,17 +700,15 @@ mod tests {
     #[test]
     fn it_checks_for_receivers() {
         let mut message = Message::new(
-            "test@company.com", 
+            "test@company.com",
             "Company",
-            Some("Subject".to_string()), 
-            Some("Text Part".to_string()));
+            Some("Subject".to_string()),
+            Some("Text Part".to_string()),
+        );
 
         assert_eq!(message.have_email_fields_filled(), false);
 
-        message.set_receivers(
-            vec![], 
-            None,
-            None);
+        message.set_receivers(vec![], None, None);
 
         assert_eq!(message.have_email_fields_filled(), true);
     }

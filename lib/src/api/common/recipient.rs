@@ -36,7 +36,7 @@ impl Recipient {
     ///
     /// This function does not support recipients with name provided as string.
     pub fn from_comma_separated(recipients: &str) -> Vec<Self> {
-        let as_string_vec = recipients.split(",");
+        let as_string_vec = recipients.split(',');
 
         as_string_vec
             .into_iter()
