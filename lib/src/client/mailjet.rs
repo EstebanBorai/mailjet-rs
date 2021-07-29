@@ -4,8 +4,7 @@ use crate::client::response::Response as MailjetResponse;
 use crate::client::status_code::StatusCode as MailjetStatusCode;
 use crate::client::version::SendAPIVersion;
 use http_auth_basic::Credentials;
-use hyper::client::HttpConnector;
-use hyper::Client as HyperClient;
+use hyper::client::{Client as HyperClient, HttpConnector};
 use hyper::Error as HyperError;
 use hyper::{Body, Request, Response};
 use hyper_tls::HttpsConnector;
@@ -41,7 +40,7 @@ impl Client {
         // Reference: https://dev.mailjet.com/email/guides/
         //
 
-        if public_key == "" || private_key == "" {
+        if public_key.is_empty() || private_key.is_empty() {
             panic!("Invalid `public_key` or `private_key` provided");
         }
 

@@ -374,7 +374,6 @@
 //! This project is licensed under the MIT License to match the same licensing as Mailjet's official wrappers
 //!
 extern crate hyper;
-use serde_json;
 
 mod api;
 mod client;
