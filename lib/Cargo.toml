@@ -1,6 +1,6 @@
 [package]
 name = "mailjet-rs"
-version = "1.0.0"
+version = "0.2.0"
 authors = ["Esteban Borai <estebanborai@gmail.com>"]
 edition = "2018"
 license = "MIT"
