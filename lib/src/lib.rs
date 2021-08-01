@@ -27,10 +27,10 @@
 //! ### Installation
 //!
 //! ```toml
-//! mailjet-rs = "0.1.2"
+//! mailjet-rs = "0.2.0"
 //!
 //! # Used by `Hyper` which is the HTTP request solution behind the Client
-//! tokio = { version = "0.2", features = ["full"] }
+//! tokio = { version = "1", features = ["full"] }
 //! ```
 //!
 //! ### Client
