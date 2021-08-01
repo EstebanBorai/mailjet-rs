@@ -18,9 +18,8 @@ jobs:
           profile: minimal
           toolchain: stable
 
-      - name: Dry run's publish
-        run: cargo publish
-        args: --dry-run
+      - name: Dry Rung Cargo Publish
+        run: cd ./lib && cargo publish --dry-run
 
       - name: Create Release
         id: create_release
@@ -43,4 +42,4 @@ jobs:
           CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
 
       - name: publish crate
-        run: cargo publish
+        run: cd ./lib && cargo publish
