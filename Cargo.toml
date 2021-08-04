@@ -1,5 +1,27 @@
-[workspace]
-members = [
-  "example",
-  "lib",
+[package]
+name = "mailjet-rs"
+version = "1.0.0"
+authors = ["Esteban Borai <estebanborai@gmail.com>"]
+edition = "2018"
+license = "MIT"
+description = "Mailjet API wrapper for Rust"
+readme = "../README.md"
+repository = "https://github.com/EstebanBorai/mailjet-rs"
+categories = [
+  "api-bindings",
+  "email",
+  "web-programming",
 ]
+
+[lib]
+name = "mailjet_rs"
+path = "src/lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+serde = "1.0.127"
+serde_json = "1.0.66"
+thiserror = "1.0"
+url = "2.2.2"
