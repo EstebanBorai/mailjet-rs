@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::fmt::Write;
 
 /// Alias type for `Vec<Recipient>`
 pub type Recipients = Vec<Recipient>;
@@ -40,7 +41,7 @@ impl Recipient {
 
         as_string_vec
             .into_iter()
-            .map(|r| Recipient::new(r))
+            .map(Recipient::new)
             .collect::<Vec<Recipient>>()
     }
 
@@ -52,12 +53,12 @@ impl Recipient {
     pub fn as_comma_separated(&self) -> String {
         let mut string = String::default();
 
-        if self.name != String::default() {
-            string += &format!("\"{}\"", self.name);
+        if !self.name.is_empty() {
+            let _ = write!(string, "\"{}\"", self.name);
             string += " ";
         }
 
-        string += &format!("<{}>", self.email);
+        let _ = write!(string, "<{}>", self.email);
         string
     }
 }
