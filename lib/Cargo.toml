@@ -2,7 +2,7 @@
 name = "mailjet-rs"
 version = "0.2.0"
 authors = ["Esteban Borai <estebanborai@gmail.com>"]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 description = "Mailjet API wrapper for Rust"
 readme = "../README.md"
