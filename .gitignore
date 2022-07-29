@@ -5,6 +5,7 @@
 # Application Related #
 #######################
 /target
+Cargo.lock
 
 # Compiled source #
 ###################

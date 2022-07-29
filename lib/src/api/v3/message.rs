@@ -2,6 +2,7 @@ use crate::api::common::{Payload, Recipient, Recipients};
 use crate::v3::Attachment;
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::{to_string as to_json_string, Map, Value};
+use std::collections::HashMap;
 
 /// Error message to panic with when pushing to the `Recipients` vector
 /// when receivers (`To`, `Cc`, `Bcc`) has been defined
@@ -346,6 +347,9 @@ pub struct Message {
     #[serde(rename = "Mj-EventPayload")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mj_event_payload: Option<String>,
+    #[serde(rename = "Headers")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub headers: Option<HashMap<String, String>>,
 }
 
 impl Message {
@@ -380,6 +384,7 @@ impl Message {
             use_mj_template_language: None,
             mj_custom_id: None,
             mj_event_payload: None,
+            headers: None,
         }
     }
 
@@ -514,6 +519,15 @@ impl Message {
         self.mj_custom_id = Some(payload);
     }
 
+    /// Sets the `Headers` property for the `Message`.
+    ///
+    /// ## Mailjet SendAPI V3
+    /// In every message, you can specify your own Email headers using the Headers property.
+    /// For example, it is possible to specify a Reply-To email address.
+    pub fn set_headers(&mut self, headers: HashMap<String, String>) {
+        self.headers = Some(headers);
+    }
+
     /// Checks for any of `To`, `Cc` or `Bcc` to be `Some`.
     ///
     /// Used to validate if the `Recipients` could be filled or not
@@ -573,6 +587,7 @@ mod tests {
         assert_eq!(message.use_mj_template_language, None);
         assert_eq!(message.mj_custom_id, None);
         assert_eq!(message.mj_event_payload, None);
+        assert_eq!(message.headers, None);
     }
 
     #[test]
@@ -703,7 +718,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
+            None,
         );
 
         assert_eq!(message.have_email_fields_filled(), false);
