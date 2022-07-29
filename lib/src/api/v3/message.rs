@@ -2,6 +2,7 @@ use crate::api::common::{Payload, Recipient, Recipients};
 use crate::v3::Attachment;
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::{to_string as to_json_string, Map, Value};
+use std::collections::HashMap;
 
 /// Error message to panic with when pushing to the `Recipients` vector
 /// when receivers (`To`, `Cc`, `Bcc`) has been defined
@@ -346,6 +347,9 @@ pub struct Message {
     #[serde(rename = "Mj-EventPayload")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mj_event_payload: Option<String>,
+    #[serde(rename = "Headers")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub headers: Option<HashMap<String, String>>,
 }
 
 impl Message {
@@ -362,6 +366,7 @@ impl Message {
         from_name: &str,
         subject: Option<String>,
         text_part: Option<String>,
+        headers: Option<HashMap<String, String>>
     ) -> Self {
         Self {
             from_email: String::from(from_email),
@@ -380,6 +385,7 @@ impl Message {
             use_mj_template_language: None,
             mj_custom_id: None,
             mj_event_payload: None,
+            headers: headers,
         }
     }
 
@@ -514,6 +520,15 @@ impl Message {
         self.mj_custom_id = Some(payload);
     }
 
+    /// Sets the `Headers` property for the `Message`.
+    /// 
+    /// ## Mailjet SendAPI V3
+    /// In every message, you can specify your own Email headers using the Headers property.
+    /// For example, it is possible to specify a Reply-To email address.
+    pub fn set_headers(&mut self, headers: HashMap<String, String>) {
+        self.headers = Some(headers);
+    }
+
     /// Checks for any of `To`, `Cc` or `Bcc` to be `Some`.
     ///
     /// Used to validate if the `Recipients` could be filled or not
@@ -561,6 +576,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         assert_eq!(message.from_email, "test@company.com".to_string());
@@ -573,6 +589,7 @@ mod tests {
         assert_eq!(message.use_mj_template_language, None);
         assert_eq!(message.mj_custom_id, None);
         assert_eq!(message.mj_event_payload, None);
+        assert_eq!(message.headers, None);
     }
 
     #[test]
@@ -585,6 +602,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         message.set_receivers(vec![], None, None);
@@ -602,6 +620,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         message.set_receivers(vec![], None, None);
@@ -619,6 +638,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         message.push_recipient(Recipient::new("test@company.com"));
@@ -633,6 +653,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         let attachment = Attachment::new("text/plain", "filename", "base64");
@@ -654,6 +675,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         let attachment = Attachment::new("text/plain", "filename", "base64");
@@ -675,6 +697,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         message.set_template_id(1);
@@ -690,6 +713,7 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
+            None
         );
 
         message.set_custom_id("1".to_string());
@@ -703,7 +727,8 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
+            None,
+            None
         );
 
         assert_eq!(message.have_email_fields_filled(), false);
