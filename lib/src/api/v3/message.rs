@@ -520,7 +520,7 @@ impl Message {
     }
 
     /// Sets the `Headers` property for the `Message`.
-    /// 
+    ///
     /// ## Mailjet SendAPI V3
     /// In every message, you can specify your own Email headers using the Headers property.
     /// For example, it is possible to specify a Reply-To email address.
@@ -574,7 +574,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string())
+            Some("Text Part".to_string()),
         );
 
         assert_eq!(message.from_email, "test@company.com".to_string());
@@ -599,7 +599,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string())
+            Some("Text Part".to_string()),
         );
 
         message.set_receivers(vec![], None, None);
@@ -616,7 +616,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string())
+            Some("Text Part".to_string()),
         );
 
         message.set_receivers(vec![], None, None);
@@ -668,7 +668,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string())
+            Some("Text Part".to_string()),
         );
 
         let attachment = Attachment::new("text/plain", "filename", "base64");
@@ -689,7 +689,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string())
+            Some("Text Part".to_string()),
         );
 
         message.set_template_id(1);
@@ -704,7 +704,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string())
+            Some("Text Part".to_string()),
         );
 
         message.set_custom_id("1".to_string());
@@ -718,7 +718,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            None
+            None,
         );
 
         assert_eq!(message.have_email_fields_filled(), false);

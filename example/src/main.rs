@@ -19,7 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         "mailjet_sender@company.com",
         "Mailjet Rust",
         Some("Your email flight plan!".to_string()),
-        Some("Dear passenger, welcome to Mailjet! May the delivery force be with you!".to_string())
+        Some("Dear passenger, welcome to Mailjet! May the delivery force be with you!".to_string()),
     );
 
     message.push_recipient(Recipient::new("receiver@company.com"));
@@ -61,7 +61,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     message.vars = Some(vars);
 
     // Set the headers to a custom Reply-To address
-    message.set_headers(HashMap::from([("Reply-To".to_string(), "copilot@mailjet.com".to_string())]));
+    message.set_headers(HashMap::from([(
+        "Reply-To".to_string(),
+        "copilot@mailjet.com".to_string(),
+    )]));
 
     // Finally send the message using the `Client`
     let response = client.send(message).await;
