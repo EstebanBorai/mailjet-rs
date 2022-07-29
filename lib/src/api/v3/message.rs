@@ -366,7 +366,6 @@ impl Message {
         from_name: &str,
         subject: Option<String>,
         text_part: Option<String>,
-        headers: Option<HashMap<String, String>>
     ) -> Self {
         Self {
             from_email: String::from(from_email),
@@ -385,7 +384,7 @@ impl Message {
             use_mj_template_language: None,
             mj_custom_id: None,
             mj_event_payload: None,
-            headers: headers,
+            headers: None,
         }
     }
 
@@ -575,8 +574,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
-            None
+            Some("Text Part".to_string())
         );
 
         assert_eq!(message.from_email, "test@company.com".to_string());
@@ -601,8 +599,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
-            None
+            Some("Text Part".to_string())
         );
 
         message.set_receivers(vec![], None, None);
@@ -619,8 +616,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
-            None
+            Some("Text Part".to_string())
         );
 
         message.set_receivers(vec![], None, None);
@@ -638,7 +634,6 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
-            None
         );
 
         message.push_recipient(Recipient::new("test@company.com"));
@@ -653,7 +648,6 @@ mod tests {
             "Company",
             Some("Subject".to_string()),
             Some("Text Part".to_string()),
-            None
         );
 
         let attachment = Attachment::new("text/plain", "filename", "base64");
@@ -674,8 +668,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
-            None
+            Some("Text Part".to_string())
         );
 
         let attachment = Attachment::new("text/plain", "filename", "base64");
@@ -696,8 +689,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
-            None
+            Some("Text Part".to_string())
         );
 
         message.set_template_id(1);
@@ -712,8 +704,7 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            Some("Text Part".to_string()),
-            None
+            Some("Text Part".to_string())
         );
 
         message.set_custom_id("1".to_string());
@@ -727,7 +718,6 @@ mod tests {
             "test@company.com",
             "Company",
             Some("Subject".to_string()),
-            None,
             None
         );
 
