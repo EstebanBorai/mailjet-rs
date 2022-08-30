@@ -1,5 +1,15 @@
-[workspace]
-members = [
-  "example",
-  "lib",
+[package]
+name = "mailjet-rs"
+description = "Mailjet API Client for Rust"
+repository = "https://github.com/EstebanBorai/mailjet-rs"
+categories = [
+  "api-bindings",
+  "email",
+  "web-programming",
 ]
+homepage = "https://github.com/EstebanBorai/mailjet-rs"
+license = "MIT"
+version = "0.3.0"
+authors = ["Esteban Borai <estebanborai@gmail.com>"]
+edition = "2021"
+readme = "README.md"
