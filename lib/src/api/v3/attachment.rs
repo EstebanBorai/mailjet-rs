@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 /// "Inline_attachments":[{"Content-type":"image/png","Filename":"logo.png","content":"iVBOR..."}]
 /// ```
 ///
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Attachment {
     #[serde(rename = "Content-type")]
     pub content_type: String,

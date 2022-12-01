@@ -7,6 +7,9 @@ use http_auth_basic::Credentials;
 use hyper::client::{Client as HyperClient, HttpConnector};
 use hyper::Error as HyperError;
 use hyper::{Body, Request, Response};
+#[cfg(feature = "rustls")]
+use hyper_rustls::HttpsConnector;
+#[cfg(not(feature = "rustls"))]
 use hyper_tls::HttpsConnector;
 
 /// Mailjet's Email API uses the API keys provided by Mailjet for your account [here](https://app.mailjet.com/account/api_keys).
@@ -46,6 +49,13 @@ impl Client {
 
         let keys = Credentials::new(public_key, private_key);
         let encoded_credentials = keys.as_http_header();
+        #[cfg(feature = "rustls")]
+        let https = hyper_rustls::HttpsConnectorBuilder::new()
+            .with_webpki_roots()
+            .https_only()
+            .enable_http2()
+            .build();
+        #[cfg(not(feature = "rustls"))]
         let https = HttpsConnector::new();
         let http_client = HyperClient::builder().build::<_, hyper::Body>(https);
 
